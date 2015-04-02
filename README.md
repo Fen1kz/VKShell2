@@ -43,11 +43,18 @@ $Audio Mode>Sorting Mode> 1playlist 2playlist 3pla -command -command
 
 ## Command list
 
-- `$VKShell> echo` 
+- `$VKShell> start` // iternal
+- `$VKShell> echo` // echo command
 - `$VKShell> audio => $VKShell>audio>`
-- `$VKShell> login (username) (?password) (?appid) => $VKShell[username]>`
+- `$VKShell> login (username) (?password) (?appid) => $VKShell>vk[username]>`
 
 ## Use cases:
+### Files:
+1. Get source1, source2, target
+1. n times: Take source1[n], normalize, copy to target
+1. n times: Take source2[n], normalize, check hash, copy to target
+1. write down equal hashes
+
 ### Audio:
 #### download
 ```
