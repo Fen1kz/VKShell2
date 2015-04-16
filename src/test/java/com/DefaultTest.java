@@ -1,6 +1,6 @@
 package com;
 
-import com.main.MainConfig;
+import vkshell.main.MainConfig;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

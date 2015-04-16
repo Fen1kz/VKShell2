@@ -1,9 +1,7 @@
-package com.files.manager.visitors;
+package vkshell.files.manager.visitors;
 
-import com.files.manager.interfaces.IFileManagerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -12,10 +10,8 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
-import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.FileVisitResult.*;
+import static java.nio.file.StandardCopyOption.*;
 
 
 /**
@@ -23,20 +19,17 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class NormalNameCopier implements FileVisitor<Path> {
+public class SimpleTreeCopier implements FileVisitor<Path> {
     private final Path source;
     private final Path target;
     private final CopyOption[] options;
-    private static final Logger logger = LoggerFactory.getLogger(NormalNameCopier.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleTreeCopier.class);
 
-    @Autowired
-    IFileManagerUtils fileManagerUtils;
-
-    private NormalNameCopier(Path source, Path target) {
+    private SimpleTreeCopier(Path source, Path target) {
         this(source, target, new CopyOption[] {COPY_ATTRIBUTES, REPLACE_EXISTING });
     }
 
-    private NormalNameCopier(Path source, Path target, CopyOption... options) {
+    private SimpleTreeCopier(Path source, Path target, CopyOption... options) {
         this.source = source;
         this.target = target;
         this.options = options;
@@ -59,16 +52,10 @@ public class NormalNameCopier implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult visitFile(Path sourceFile, BasicFileAttributes attrs) {
-        Path targetFile = target.resolve(source.relativize(sourceFile));
-        Path targetFileParent = targetFile.getParent();
-
-        String sourceFileName = fileManagerUtils.getNormalizedName(sourceFile);
-        String targetFileName = fileManagerUtils.getNormalizedName(targetFile);
-
-        Path newTargetFile = targetFileParent.resolve(targetFileName);
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+        Path targetFile = target.resolve(source.relativize(file));
         try {
-            Files.copy(sourceFile, newTargetFile, options);
+            Files.copy(file, targetFile, options);
         } catch (IOException x) {
             logger.error("Unable to copy: %s: %s%n", source, x);
         }

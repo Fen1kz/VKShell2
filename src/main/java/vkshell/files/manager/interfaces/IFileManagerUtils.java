@@ -1,4 +1,4 @@
-package com.files.manager.interfaces;
+package vkshell.files.manager.interfaces;
 
 import java.nio.file.Path;
 

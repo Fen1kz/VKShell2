@@ -1,7 +1,9 @@
-package com.files.manager.visitors;
+package vkshell.files.manager.visitors;
 
+import vkshell.files.manager.interfaces.IFileManagerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -9,10 +11,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.logging.LogManager;
 
-import static java.nio.file.FileVisitResult.*;
-import static java.nio.file.StandardCopyOption.*;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 
 /**
@@ -20,17 +23,20 @@ import static java.nio.file.StandardCopyOption.*;
  */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class SimpleTreeCopier implements FileVisitor<Path> {
+public class NormalNameCopier implements FileVisitor<Path> {
     private final Path source;
     private final Path target;
     private final CopyOption[] options;
-    private static final Logger logger = LoggerFactory.getLogger(SimpleTreeCopier.class);
+    private static final Logger logger = LoggerFactory.getLogger(NormalNameCopier.class);
 
-    private SimpleTreeCopier(Path source, Path target) {
+    @Autowired
+    IFileManagerUtils fileManagerUtils;
+
+    private NormalNameCopier(Path source, Path target) {
         this(source, target, new CopyOption[] {COPY_ATTRIBUTES, REPLACE_EXISTING });
     }
 
-    private SimpleTreeCopier(Path source, Path target, CopyOption... options) {
+    private NormalNameCopier(Path source, Path target, CopyOption... options) {
         this.source = source;
         this.target = target;
         this.options = options;
@@ -53,10 +59,16 @@ public class SimpleTreeCopier implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-        Path targetFile = target.resolve(source.relativize(file));
+    public FileVisitResult visitFile(Path sourceFile, BasicFileAttributes attrs) {
+        Path targetFile = target.resolve(source.relativize(sourceFile));
+        Path targetFileParent = targetFile.getParent();
+
+        String sourceFileName = fileManagerUtils.getNormalizedName(sourceFile);
+        String targetFileName = fileManagerUtils.getNormalizedName(targetFile);
+
+        Path newTargetFile = targetFileParent.resolve(targetFileName);
         try {
-            Files.copy(file, targetFile, options);
+            Files.copy(sourceFile, newTargetFile, options);
         } catch (IOException x) {
             logger.error("Unable to copy: %s: %s%n", source, x);
         }

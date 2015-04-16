@@ -1,4 +1,4 @@
-package com.files;
+package vkshell.files;
 
 public class FileEntity {
 }

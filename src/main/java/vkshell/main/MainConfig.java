@@ -1,12 +1,12 @@
-package com.main;
+package vkshell.main;
 
 
-import com.app.AppConfig;
+import vkshell.app.AppConfig;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-@ComponentScan("com")
+@ComponentScan("vkshell")
 @Import({ AppConfig.class })
 //@PropertySource("classpath:application.properties")
 @PropertySource("classpath:application.properties")

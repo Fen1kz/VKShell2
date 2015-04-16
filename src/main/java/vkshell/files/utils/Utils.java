@@ -1,4 +1,4 @@
-package com.files.utils;
+package vkshell.files.utils;
 
 import org.springframework.util.DigestUtils;
 

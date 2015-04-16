@@ -1,11 +1,9 @@
 package com.files;
 
 import com.DefaultTest;
-import com.app.App;
-import com.files.manager.interfaces.IFileManager;
-import com.files.manager.interfaces.IFileManagerString;
-import com.files.manager.visitors.NormalNameCopier;
-import com.files.manager.visitors.SimpleTreeCopier;
+import vkshell.app.App;
+import vkshell.files.manager.interfaces.IFileManagerString;
+import vkshell.files.manager.visitors.SimpleTreeCopier;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;

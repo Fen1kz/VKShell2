@@ -1,6 +1,6 @@
-package com.files.manager;
+package vkshell.files.manager;
 
-import com.files.manager.interfaces.IFileManagerString;
+import vkshell.files.manager.interfaces.IFileManagerString;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.test.annotation.DirtiesContext;
+import vkshell.app.App;
 
 import java.util.HashMap;
 import java.util.Map;

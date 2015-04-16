@@ -1,9 +1,8 @@
-package com.app;
+package vkshell.app;
 
-import com.files.manager.interfaces.IFileManager;
-import com.files.manager.interfaces.IFileManagerString;
-import com.files.manager.visitors.NormalNameCopier;
-import com.files.manager.visitors.SimpleTreeCopier;
+import vkshell.files.manager.interfaces.IFileManager;
+import vkshell.files.manager.interfaces.IFileManagerString;
+import vkshell.files.manager.visitors.SimpleTreeCopier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

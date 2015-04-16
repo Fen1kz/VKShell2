@@ -1,7 +1,7 @@
 package com.files.manager;
 
 import com.files.DefaultFileTest;
-import com.files.manager.interfaces.IFileManagerUtils;
+import vkshell.files.manager.interfaces.IFileManagerUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

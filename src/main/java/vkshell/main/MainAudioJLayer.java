@@ -1,4 +1,4 @@
-package com.main;
+package vkshell.main;
 
 import javazoom.jl.player.Player;
 

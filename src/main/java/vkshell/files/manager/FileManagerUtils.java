@@ -1,6 +1,6 @@
-package com.files.manager;
+package vkshell.files.manager;
 
-import com.files.manager.interfaces.IFileManagerUtils;
+import vkshell.files.manager.interfaces.IFileManagerUtils;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;

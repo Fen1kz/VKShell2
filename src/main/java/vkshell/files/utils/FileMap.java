@@ -1,6 +1,6 @@
-package com.files.utils;
+package vkshell.files.utils;
 
-import com.files.FileEntity;
+import vkshell.files.FileEntity;
 
 import java.util.*;
 

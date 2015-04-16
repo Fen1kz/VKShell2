@@ -1,4 +1,4 @@
-package com.main;
+package vkshell.main;
 
 import java.awt.*;
 import java.io.File;

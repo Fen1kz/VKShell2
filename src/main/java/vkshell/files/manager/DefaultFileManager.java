@@ -1,7 +1,7 @@
-package com.files.manager;
+package vkshell.files.manager;
 
-import com.app.App;
-import com.files.manager.interfaces.IFileManager;
+import vkshell.app.App;
+import vkshell.files.manager.interfaces.IFileManager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

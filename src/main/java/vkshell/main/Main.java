@@ -1,7 +1,6 @@
-package com.main;
+package vkshell.main;
 
-import com.app.App;
-import com.main.MainConfig;
+import vkshell.app.App;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
