@@ -13,6 +13,8 @@ dependencies {
 	compile ('org.springframework:spring-context:4.1.5.RELEASE')
 	compile ('org.springframework:spring-test:4.1.5.RELEASE')
 
+	compile ('jline:jline:2.11')
+
 	compile 'javazoom:jlayer:1.0.1'
 
 	compile 'commons-cli:commons-cli:1.2+'
