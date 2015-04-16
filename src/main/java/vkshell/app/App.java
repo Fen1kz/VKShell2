@@ -37,7 +37,7 @@ public class App {
     @PostConstruct
     public void init() {
         logger.info("{} started @{}", this, this.folder);
-        this.fileManager = context.getBean(IFileManagerString.class, SimpleTreeCopier.class);
+//        this.fileManager = context.getBean(IFileManagerString.class, SimpleTreeCopier.class);
     }
 
     public IFileManager getFileManager() {

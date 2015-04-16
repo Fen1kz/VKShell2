@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public interface IFileManagerString extends IFileManager {
-    public Path makeFile(String path, String content) throws IOException;
+    Path makeDirs(String path);
 
-    public Path makeDirs(String path);
+    Path makeFile(String path, String content) throws IOException;
 
-    public Path copyFolder(String source, String target) throws IOException;
+    Path makeFile(String path, String content, Boolean overwrite) throws IOException;
 
-    public Path mergeFolder(String source1, String source2, String target) throws IOException;
+    Path copyFolder(String source, String target) throws IOException;
+
+    Path mergeFolder(String source1, String source2, String target) throws IOException;
 }

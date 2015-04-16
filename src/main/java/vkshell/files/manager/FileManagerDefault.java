@@ -1,5 +1,9 @@
 package vkshell.files.manager;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import vkshell.app.App;
 import vkshell.files.manager.interfaces.IFileManager;
 import org.apache.commons.io.FileUtils;
@@ -9,16 +13,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import vkshell.files.manager.visitors.FileVisitorRule;
 
 import java.io.IOException;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 @Lazy
 @Component
-public class DefaultFileManager implements IFileManager {
-    private final Logger logger = LoggerFactory.getLogger(DefaultFileManager.class);
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class FileManagerDefault implements IFileManager {
+    private final Logger logger = LoggerFactory.getLogger(FileManagerDefault.class);
 
     @Autowired
     protected App app;
@@ -26,14 +36,21 @@ public class DefaultFileManager implements IFileManager {
     @Autowired
     protected ApplicationContext ctx;
 
-    protected final Class<FileVisitor<Path>> fileVisitorClass;
+    protected Collection<Rule> rules;
+    protected Map<String, String> files;
 
-    protected DefaultFileManager(Class<FileVisitor<Path>> fileVisitorClass) {
-        this.fileVisitorClass = fileVisitorClass;
+    protected FileManagerDefault() {
+        rules = new HashSet<>();
+        rules.add(Rule.StandartName);
+
+        files = new HashMap<>();
     }
 
     protected FileVisitor<Path> getFileVisitor(Path source, Path target) {
-        return ctx.getBean(fileVisitorClass, source, target);
+        FileVisitor<Path> fileVisitor = new FileVisitorRule(this, source, target);
+
+        ctx.getAutowireCapableBeanFactory().autowireBean(fileVisitor);
+        return fileVisitor;
     }
 
     @Override
@@ -51,7 +68,12 @@ public class DefaultFileManager implements IFileManager {
 
     @Override
     public Path makeFile(Path file, String content) throws IOException {
-        if (!Files.exists(file)) {
+        return makeFile(file, content, false);
+    }
+
+    @Override
+    public Path makeFile(Path file, String content, Boolean overwrite) throws IOException {
+        if (!Files.exists(file) || overwrite) {
             this.makeDirs(file.getParent());
             Files.write(file, content.getBytes());
             return file;
@@ -72,5 +94,30 @@ public class DefaultFileManager implements IFileManager {
         copyFolder(source1, target);
         copyFolder(source2, target);
         return target;
+    }
+
+    @Override
+    public void setRule(Rule rule) {
+        rules.add(rule);
+    }
+
+    @Override
+    public void removeRule(Rule rule) {
+        rules.remove(rule);
+    }
+
+    @Override
+    public boolean hasRule(Rule rule) {
+        return rules.contains(rule);
+    }
+
+    @Override
+    public void setByHash() {
+
+    }
+
+    @Override
+    public Path getByHash() {
+        return null;
     }
 }

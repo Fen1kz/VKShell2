@@ -22,21 +22,27 @@ public class FileManagerUtilsTest extends DefaultFileTest {
 
     @Test
     public void normalizeFileName() throws IOException {
-//        nameTest("The Group - The Name (Rmx By &Asdf).tx3",
-//                "the group - The Name (rmx by &asdf).tx3",
-//                "the group — The Name (rmx by &asdf).tx3",
-//                "the_group_—_The_Name (rmx by &asdf).tx3",
-//                "the_group___—_The_Name   (Rmx By   &Asdf).tx3",
-//                "the_group___—_The_Name   (Rmx By   &!Asdf).tx3",
-//                "the_group___—_The_Name   (Rmx By   &[]Asdf).tx3"
-//        );
-//        nameTest("Ру .ft. En & US - (R K.ft.saf8).tx3",
-//                "ру .ft. en & us =- (r k.ft.saf8 ).tx3"
-//        );
-//        nameTest("Название - 123.tx3",
-//                "название - 123.tx3",
-//                "__название_-_123.tx3"
-//        );
+        nameTest("The Group - The Name (Rmx By &ASDF).tx3",
+                "The Group - The Name (Rmx By &ASDF).tx3",
+                "The Group — The Name (Rmx By &ASDF).tx3",
+                "The_Group_—_The_Name (Rmx By &ASDF).tx3",
+                "The_Group___—_The_Name   (Rmx By   &ASDF).tx3",
+                "The_Group___—_The_Name   (Rmx By   &!ASDF).tx3",
+                "The_Group___—_The_Name   (Rmx By   &[]ASDF).tx3"
+        );
+        nameTest("Фыв .ft. En & US - (R K.ft.saf8).tx3",
+                "Фыв .ft. En & US =- (R K.ft.saf8).tx3"
+        );
+        nameTest("Название - 123.tx3",
+                "Название - 123.tx3",
+                "__Название_-_123.tx3"
+        );
+    }
+    @Test
+    public void normalizeFileName2() throws IOException {
+        nameAntiTest("The Group - The Name (Rmx By &Asdf).tx3",
+                "The Group - The Name (rmx by &asdf).tx3"
+        );
     }
 
     private void nameTest(String good, String... others) throws IOException {
@@ -44,16 +50,16 @@ public class FileManagerUtilsTest extends DefaultFileTest {
         for (String other : others) {
             Path path = fileManager.makeFile("file" + ++c + "/" + other, other);
             String name = fileManagerUtils.getNormalizedName(path);
-            assertEquals(good, name);
+            assertEquals(String.valueOf(c), good, name);
         }
     }
 
-    private void antiNameTest(String good, String... others) throws IOException {
+    private void nameAntiTest(String good, String... others) throws IOException {
         int c = 0;
         for (String other : others) {
             Path path = fileManager.makeFile("file" + ++c + "/" + other, other);
             String name = fileManagerUtils.getNormalizedName(path);
-            assertNotEquals(good, name);
+            assertNotEquals(String.valueOf(c), good, name);
         }
     }
 }
