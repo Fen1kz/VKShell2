@@ -15,6 +15,7 @@ import java.nio.file.Path;
 
 @Lazy
 @Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class StringFileManagerDefault extends FileManagerDefault implements IFileManagerString {
     @Override
     public Path makeDirs(String path) {

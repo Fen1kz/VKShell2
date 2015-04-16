@@ -1,4 +1,4 @@
-package com.app;//package com.app;
+package vkshell.app;//package com.app;
 
 import vkshell.app.App;
 import vkshell.main.MainConfig;

@@ -13,6 +13,8 @@ public interface IFileManager {
 
     Path makeFile(Path file, String content, Boolean overwrite) throws IOException;
 
+    void removeFile(Path file) throws IOException;
+
     Path copyFolder(Path source, Path target) throws IOException;
 
     Path mergeFolder(Path source1, Path source2, Path target) throws IOException;
@@ -25,11 +27,13 @@ public interface IFileManager {
 
     boolean hasRule(Rule rule);
 
+    Path removeHash(String hash);
+
     public enum Rule {StandartName, MakeDiff}
 
     /* HashData
      */
-    void setByHash();
+    void addHash(String hash, Path file);
 
-    Path getByHash();
+    Path getByHash(String hash);
 }

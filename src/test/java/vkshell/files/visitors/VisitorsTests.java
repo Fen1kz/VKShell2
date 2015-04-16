@@ -1,6 +1,6 @@
 //package com.files.visitors;
 //
-//import com.files.DefaultFileTest;
+//import DefaultFileTest;
 //import vkshell.files.manager.interfaces.IFileManagerUtils;
 //import vkshell.files.manager.visitors.NormalNameCopier;
 //import vkshell.files.manager.visitors.SimpleTreeCopier;

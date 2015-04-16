@@ -1,6 +1,6 @@
-package com.files.manager;
+package vkshell.files.manager;
 
-import com.files.DefaultFileTest;
+import vkshell.files.DefaultFileTest;
 import vkshell.files.manager.interfaces.IFileManagerUtils;
 import org.junit.Test;
 import org.slf4j.Logger;

@@ -1,7 +1,5 @@
 package vkshell.files.manager;
 
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import vkshell.app.App;
@@ -13,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import vkshell.files.manager.visitors.FileVisitorRule;
+import vkshell.files.manager.visitors.FileMerger;
+import vkshell.files.manager.visitors.FileScanner;
+import vkshell.files.utils.Utils;
 
 import java.io.IOException;
 import java.nio.file.FileVisitor;
@@ -37,7 +37,7 @@ public class FileManagerDefault implements IFileManager {
     protected ApplicationContext ctx;
 
     protected Collection<Rule> rules;
-    protected Map<String, String> files;
+    protected Map<String, Path> files;
 
     protected FileManagerDefault() {
         rules = new HashSet<>();
@@ -47,7 +47,7 @@ public class FileManagerDefault implements IFileManager {
     }
 
     protected FileVisitor<Path> getFileVisitor(Path source, Path target) {
-        FileVisitor<Path> fileVisitor = new FileVisitorRule(this, source, target);
+        FileVisitor<Path> fileVisitor = new FileMerger(this, source, target);
 
         ctx.getAutowireCapableBeanFactory().autowireBean(fileVisitor);
         return fileVisitor;
@@ -84,6 +84,11 @@ public class FileManagerDefault implements IFileManager {
     }
 
     @Override
+    public void removeFile(Path file) throws IOException {
+        Files.delete(file);
+    }
+
+    @Override
     public Path copyFolder(Path source, Path target) throws IOException {
         Files.walkFileTree(source, getFileVisitor(source, target));
         return target;
@@ -112,12 +117,20 @@ public class FileManagerDefault implements IFileManager {
     }
 
     @Override
-    public void setByHash() {
-
+    public void addHash(String hash, Path file) {
+        if (file == null) {
+            throw new NullPointerException();
+        }
+        files.put(hash, file);
     }
 
     @Override
-    public Path getByHash() {
-        return null;
+    public Path getByHash(String hash) {
+        return files.get(hash);
+    }
+
+    @Override
+    public Path removeHash(String hash) {
+        return files.remove(hash);
     }
 }

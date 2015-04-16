@@ -1,6 +1,6 @@
-package com.files;
+package vkshell.files;
 
-import com.DefaultTest;
+import vkshell.DefaultTest;
 import vkshell.app.App;
 import vkshell.files.manager.interfaces.IFileManagerFactory;
 import vkshell.files.manager.interfaces.IFileManagerString;

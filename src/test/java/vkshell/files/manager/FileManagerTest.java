@@ -1,20 +1,13 @@
-package com.files.manager;
+package vkshell.files.manager;
 
-import com.files.DefaultFileTest;
+import vkshell.files.DefaultFileTest;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import vkshell.files.manager.FileManagerUtils;
-import vkshell.files.manager.factory.FileManagerFactoryDefault;
 import vkshell.files.manager.interfaces.IFileManager;
-import vkshell.files.manager.interfaces.IFileManagerString;
 import vkshell.files.manager.interfaces.IFileManagerUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static org.junit.Assert.*;
 
 public class FileManagerTest extends DefaultFileTest {
     @Rule
@@ -22,6 +15,11 @@ public class FileManagerTest extends DefaultFileTest {
 
     @Autowired
     IFileManagerUtils fileManagerUtils;
+
+    @Before
+    public void before() throws IOException {
+        super.before();
+    }
 
     @Test
     public void makeFile() throws IOException {
@@ -42,10 +40,10 @@ public class FileManagerTest extends DefaultFileTest {
     public void makeFileDupeSilent() throws IOException {
 
         fileManager.makeFile("d1", "content", true);
-        assertFile("d", "content");
+        assertFile("d1", "content");
 
         fileManager.makeFile("d1", "duplicate", true);
-        assertFile("d", "duplicate");
+        assertFile("d1", "duplicate");
     }
 
     @Test
@@ -95,23 +93,23 @@ public class FileManagerTest extends DefaultFileTest {
     public void mergeFolderDiffRule() throws IOException {
         fileManager.setRule(IFileManager.Rule.MakeDiff);
 
-        // Name equal, Hash not equal
         fileManager.makeFile("old/b", "b file");
+        fileManager.makeFile("old/b2", "The B file");
         fileManager.makeFile("new/b", "The B file");
-        //assertFile("merged/b", "The B file");
 
         fileManager.mergeFolder("old", "new", "merged");
 
         assertFile("merged/b", "The B file");
         assertFile("merged/b_DIFF", "b file");
+        assertNoFile("merged/b2");
     }
 
     @Test
     public void mergeFolderName() throws IOException {
         fileManager.setRule(IFileManager.Rule.StandartName);
 
-        fileManager.makeFile("old/Hop_hej_la - la.tx3", "hop");
-        fileManager.makeFile("new/!!Hop_hej_la_-_la.tx3", "hop");
+        fileManager.makeFile("old/Hop_hej_la - la.tx3", "hop1");
+        fileManager.makeFile("new/!!Hop_hej_la_-_la.tx3", "hop2");
 
         fileManager.mergeFolder("old", "new", "merged");
 
@@ -122,12 +120,24 @@ public class FileManagerTest extends DefaultFileTest {
     public void mergeFolderNameNonStandart() throws IOException {
         fileManager.removeRule(IFileManager.Rule.StandartName);
 
-        fileManager.makeFile("old/Hop_hej_la - la.tx3", "hop");
-        fileManager.makeFile("new/!!Hop_hej_la_-_la.tx3", "hop");
+        fileManager.makeFile("old/Hop_hej_la - la.tx3", "hop1");
+        fileManager.makeFile("new/!!Hop_hej_la_-_la.tx3", "hop2");
 
         fileManager.mergeFolder("old", "new", "merged");
 
         assertFile("merged/Hop_hej_la - la.tx3");
         assertFile("merged/!!Hop_hej_la_-_la.tx3");
+    }
+
+    @Test
+    public void mergeFolderNameThree() throws IOException {
+        fileManager.makeFile("old/test", "test1");
+        fileManager.makeFile("old/test2", "test");
+        fileManager.makeFile("new/test", "test");
+
+        fileManager.mergeFolder("old", "new", "merged");
+
+        assertFile("merged/test", "test");
+        assertNoFile("merged/test2");
     }
 }

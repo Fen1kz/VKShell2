@@ -1,4 +1,4 @@
-package com;
+package vkshell;
 
 import vkshell.main.MainConfig;
 import org.junit.runner.RunWith;

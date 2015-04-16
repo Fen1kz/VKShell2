@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import vkshell.files.manager.interfaces.IFileManager;
 import vkshell.files.manager.interfaces.IFileManagerUtils;
+import vkshell.files.utils.Utils;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -20,21 +19,21 @@ import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class FileVisitorRule implements FileVisitor<Path> {
+public class FileMerger implements FileVisitor<Path> {
+    private static final Logger logger = LoggerFactory.getLogger(FileMerger.class);
     private final Path source;
     private final Path target;
     private final CopyOption[] options;
-    private static final Logger logger = LoggerFactory.getLogger(FileVisitorRule.class);
     private final IFileManager fileManager;
 
     @Autowired
     IFileManagerUtils fileManagerUtils;
 
-    public FileVisitorRule(IFileManager fileManager, Path source, Path target) {
+    public FileMerger(IFileManager fileManager, Path source, Path target) {
         this(fileManager, source, target, new CopyOption[] {COPY_ATTRIBUTES, REPLACE_EXISTING });
     }
 
-    private FileVisitorRule(IFileManager fileManager, Path source, Path target, CopyOption... options) {
+    private FileMerger(IFileManager fileManager, Path source, Path target, CopyOption... options) {
         this.fileManager = fileManager;
         this.source = source;
         this.target = target;
@@ -59,26 +58,42 @@ public class FileVisitorRule implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path sourceFile, BasicFileAttributes attrs) {
-        Path targetFile = target.resolve(source.relativize(sourceFile));
-        Path targetFileParent = targetFile.getParent();
+        String sourceFileHash = null;
+        try {
+            sourceFileHash = Utils.md5(sourceFile);
+        } catch (IOException x) {
+            logger.error("Unable to read: %s: %s%n", source, x);
+        }
 
-        String sourceFileName;
         String targetFileName;
         if (fileManager.hasRule(IFileManager.Rule.StandartName)) {
-            sourceFileName = fileManagerUtils.getNormalizedName(sourceFile);
-            targetFileName = fileManagerUtils.getNormalizedName(targetFile);
+            targetFileName = fileManagerUtils.getNormalizedName(sourceFile);
         } else {
-            sourceFileName = fileManagerUtils.getName(sourceFile);
-            targetFileName = fileManagerUtils.getName(targetFile);
+            targetFileName = fileManagerUtils.getName(sourceFile);
         }
 
-        Path newTargetFile = targetFileParent.resolve(targetFileName);
-        if (newTargetFile.toFile().exists()) {
+        Path targetFileParent = target.resolve(source.relativize(sourceFile)).getParent();
+        Path targetFile = targetFileParent.resolve(targetFileName);
 
-        }
 
         try {
-            Files.copy(sourceFile, newTargetFile, options);
+            if (targetFile.toFile().exists()) {
+                if (fileManager.hasRule(IFileManager.Rule.MakeDiff)) {
+                    Files.copy(targetFile, targetFile.getParent().resolve(targetFile.getFileName() + "_DIFF"));
+                } else {
+                    fileManager.removeHash(Utils.md5(targetFile));
+                    fileManager.removeFile(targetFile);
+                }
+            }
+
+            Path hashFile = fileManager.getByHash(sourceFileHash);
+            if (hashFile != null && hashFile.toFile().exists()) {
+                fileManager.removeHash(Utils.md5(hashFile));
+                fileManager.removeFile(hashFile);
+            }
+
+            Files.copy(sourceFile, targetFile, options);
+            fileManager.addHash(sourceFileHash, targetFile);
         } catch (IOException x) {
             logger.error("Unable to copy: %s: %s%n", source, x);
         }
